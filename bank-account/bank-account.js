@@ -70,7 +70,7 @@ class BankAccount {
         if (!(recipient instanceof BankAccount)) {
             throw new Error("Recipient must be a bank account.");
         }
-        
+
         if (recipient === this) {
             throw new Error("Cannot transfer to the same account.");
         }
