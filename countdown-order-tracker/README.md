@@ -131,3 +131,123 @@ Failed: Cooking failed
 ### Engineering lesson
 
 An operation that depends on another operation should only execute when its prerequisite succeeds. Error-first callbacks provide a conventional way to communicate asynchronous failures to the caller.
+
+
+
+
+
+---
+
+# Tuesday — Promises and Asynchronous Programming
+
+## Objective
+
+Understand JavaScript Promises, replace nested callbacks with Promise chains, compare sequential and parallel execution, handle multiple Promise outcomes, and implement a reusable timeout utility.
+
+## Build: promises.js
+
+### V1 — Promise fundamentals and chaining
+
+Implemented a `wait(ms)` function that returns a Promise.
+
+Rebuilt the food order tracker using `.then()` and `.catch()`.
+
+The five order stages execute sequentially:
+
+1. Order placed
+2. Order confirmed
+3. Cooking
+4. On the way
+5. Delivered
+
+**Engineering lesson:** Returning a Promise from `.then()` makes the next handler wait for that Promise to settle. A rejected Promise skips subsequent fulfillment handlers and propagates to `.catch()`.
+
+### V2 — Sequential vs parallel execution
+
+Compared three asynchronous tasks, each taking approximately one second.
+
+- Sequential execution: approximately 3 seconds.
+- Parallel execution using `Promise.all()`: approximately 1 second.
+
+Used `console.time()` and `console.timeEnd()` to measure execution duration.
+
+**Engineering lesson:** Sequential execution is appropriate when tasks depend on previous results. Parallel asynchronous execution is useful when independent operations can run concurrently.
+
+### V3 — Promise.all() vs Promise.allSettled()
+
+Created three tasks:
+- Task 1: succeeds after 1 second.
+- Task 2: fails after 500 milliseconds.
+- Task 3: succeeds after 1 second.
+
+Compared the behaviour of both methods.
+
+**Promise.all():**
+- Rejects when an input Promise rejects.
+- Does not cancel the remaining operations.
+- Useful when all operations must succeed.
+
+**Promise.allSettled():**
+- Waits for every Promise to settle.
+- Returns each outcome with its status and value or reason.
+- Useful when a complete report of independent operations is required.
+
+### V4 — Promise.race() and timeout utility
+
+Implemented a reusable `withTimeout(promise, ms)` function.
+
+The function races the original operation against a timeout Promise.
+
+Tested:
+- A 1-second operation with a 3-second timeout — successful.
+- A 5-second operation with a 2-second timeout — timed out.
+
+Improved the implementation using:
+- `clearTimeout()` to clean up the timeout timer.
+- `.finally()` to perform cleanup after either fulfillment or rejection.
+
+**Engineering lesson:** Promise.race() adopts the outcome of the first Promise to settle. A timeout does not automatically cancel the original operation.
+
+## Key concepts learned
+
+- Promise states: pending, fulfilled and rejected.
+- `new Promise()`, `resolve()` and `reject()`.
+- `.then()`, `.catch()` and `.finally()`.
+- Promise chaining and error propagation.
+- Sequential and parallel asynchronous execution.
+- `Promise.all()`.
+- `Promise.allSettled()`.
+- `Promise.race()`.
+- `setTimeout()` and `clearTimeout()`.
+- Measuring execution time with `console.time()`.
+
+## How to run
+
+```bash
+node promises.js
+```
+
+## Test results
+
+| Experiment | Approximate result |
+|---|---:|
+| Sequential execution | 3.038 seconds |
+| Parallel execution | 1.017 seconds |
+| Promise.all() rejection | 524 milliseconds |
+| Promise.allSettled() | 1.024 seconds |
+| Fast timeout test | 1.027 seconds |
+| Slow timeout test | 2.006 seconds |
+
+*Execution times are from one test run and may vary between machines.*
+
+## Engineering reflection
+
+Promises make asynchronous JavaScript easier to organize and maintain than deeply nested callbacks.
+
+Choosing the correct Promise method depends on the requirements:
+
+- Use `Promise.all()` when every operation must succeed.
+- Use `Promise.allSettled()` when every outcome matters.
+- Use `Promise.race()` when the first settled operation determines the result.
+
+Timeout handling is important when an application must avoid waiting indefinitely for an operation.
