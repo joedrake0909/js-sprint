@@ -53,7 +53,8 @@ This project uses Node.js's built-in test runner (`node:test`) and strict assert
 To execute the automated tests, navigate to the project directory and run:
 
 ```bash
-node --test```
+node --test
+```
 
 
 ## What I Learned
